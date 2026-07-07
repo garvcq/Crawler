@@ -281,7 +281,6 @@ class URLNormalizer{
 
 ## Section 5 - Future Compatibility
 
-
 The Page storage is designed to be compatible with the Indexer in the next project without changing the implementation of this one every downloaded page is stored with its URL depth and HTML while index.txt maintains the metadata required for fast lookup
 
 The following public methods will be used by the indexer - 

@@ -357,3 +357,52 @@ class Crawler {
 
 * The crawler can be extended to support multi-threading in future versions to improve performance and scalability.
 
+## Workflow -
+1. The crawler starts with a seed URL and normalizes it using the URLNormalizer.
+2. The normalized URL is checked against the SeenStore to determine if it has already been discovered or crawled.
+3. If the URL is new, it is added to the SeenStore  and marked as DISCOVERED, and then enqueued into the Frontier for crawling.
+4. The crawler dequeues a URL from the Frontier and passes it to the BrowserRenderer for rendering.
+5. The BrowserRenderer uses the Chrome DevTools Protocol to render the page and obtain the final DOM after JavaScript execution.
+6. The rendered HTML is stored in the SQLite database using the Storage component.
+7. The HTMLParser extracts URLs from the rendered HTML and normalizes them using the URLNormalizer.
+8. Each extracted URL is checked against the SeenStore to avoid duplicates. New URLs are added to the SeenStore and enqueued into the Frontier for further crawling.
+9. The process continues until the Frontier is empty or a specified maximum depth is reached.  
+
+//Comp interaction diagram
+
+## Failure Handling
+* The crawler handles common failures without stopping crawling invalid pages are skipped and the crawler continues with the remaining URLs in the frontier
+
+* Failures -
+    * Invalid URL - If a URL is invalid or unsupported it is skipped and not added to the frontier
+    * Network Errors - If a page fails to download due to network errors it is skipped and the crawler continues with the remaining URLs in the frontier
+    * Duplicate URLs - If a URL has already been seen it is skipped and not added to the frontier
+    * Malformed HTML - If a page contains malformed HTML the parser skips the invalid parts and extracts the valid links from the rest of the page
+    * Empty Page - If a page is empty it is skipped and the crawler continues with the remaining URLs in the frontier
+    * Maximum Depth Reached - If a page is at the maximum depth it is not added to the frontier and the crawler continues with the remaining URLs in the frontier
+
+## Future Comatibility -
+* The crawler has been designed so that the next project can directly reuse its output without modifying the crawling process.
+
+* The Indexer will:
+
+    * Read rendered HTML directly from SQLiteStorage.
+    * Use HTMLParser to extract page titles, visible text, and metadata.
+    * Build an inverted index from the extracted content.
+    * Avoid downloading pages again because the rendered HTML is already available in the database.
+    * The indexer can iterate over all stored pages by calling pagecount() and getURLbyID() the returned URL is then used with getpage() to retrieve corresponding HTML and build the indexer
+
+* Since each crawler component has a single responsibility, additional features can be added with minimal changes to the existing architecture.
+
+## Complexity Summary - 
+| Component       | Primary Operation | Complexity                                  |
+| --------------- | ----------------- | ------------------------------------------- |
+| Queue           | Push / Pop        | O(1)                                        |
+| Frontier        | Push / Pop        | O(1)                                        |
+| SeenStore       | Lookup            | Average O(1), Worst O(n)                    |
+| PatternMatcher  | Search            | O(n + m)                                    |
+| HTMLParser      | Link Extraction   | O(n)                                        |
+| URLNormalizer   | Normalize URL     | O(n)                                        |
+| BrowserRenderer | Render Page       | Depends on network and page rendering       |
+| SQLiteStorage   | Store / Retrieve  | Depends on indexed database operations      |
+| Crawler         | Complete Crawl    | Depends on pages crawled and rendering time |
