@@ -9,31 +9,38 @@ The objective of this project is to implement a web crawler capable of collectin
     * Older versions of the crawler design had a problem were they were only downloading the initial HTML returned by the server , this crawler renders pages using the Chrome DevTools Protocol(CDP). JS is executed before the page is processed.
 
 ## Architecture -
-* Crawler - 
 ```mermaid
 flowchart LR
 
-Seed["Seed URL"]
+subgraph Crawler
 
-URLNormalizer
-
-SeenStore
+direction LR
 
 Frontier
+
+SeenStore
 
 BrowserRenderer
 
 HTMLParser
 
+URLNormalizer
+
 SQLiteStorage
 
-Seed --> URLNormalizer
-URLNormalizer --> SeenStore
-SeenStore --> Frontier
+end
+
 Frontier --> BrowserRenderer
+
 BrowserRenderer --> HTMLParser
+
 BrowserRenderer --> SQLiteStorage
+
 HTMLParser --> URLNormalizer
+
+URLNormalizer --> SeenStore
+
+SeenStore --> Frontier
 ```
 
 ## Design Decisions - 
@@ -76,13 +83,23 @@ class Queue {
 ```mermaid
 flowchart LR
 
+subgraph Stack
+
 Q["Queue<T>"]
 
-subgraph Internal["Internal Representation"]
+SL["SinglyList<T>
+
+head
+tail
+size"]
+
+Q --> SL
+
+end
+
+subgraph Heap
 
 direction LR
-
-Head["Head"]
 
 N1["Node<T>"]
 
@@ -90,19 +107,21 @@ N2["Node<T>"]
 
 N3["Node<T>"]
 
-Tail["Tail"]
+Null["nullptr"]
 
-Head --> N1 --> N2 --> N3 --> Tail
+N1 --> N2 --> N3 --> Null
 
 end
 
-Q --> Internal
+SL -->|head| N1
 
-E["enqueue()"] --> Tail
+SL -->|tail| N3
 
-Head --> D["dequeue()"]
+Enq["enqueue()"] --> N3
 
-F["front()"] -.returns.-> Head
+N1 --> Deq["dequeue()"]
+
+Front["front()"] -.-> N1
 ```
 
 * Time Complexity - 
@@ -243,28 +262,74 @@ Class SeenStore {
 ```mermaid
 flowchart LR
 
-SQLite["SQLiteStorage"]
+subgraph Stack
 
-SQLite -. rebuild() .-> HM
+Seen["SeenStore"]
 
-subgraph SeenStore
+HM["HashMap
 
-HM["HashMap<string, URLState>"]
+buckets*
+capacity
+size"]
 
-HM --> B0["Bucket 0"]
-HM --> B1["Bucket 1"]
-HM --> B2["Bucket 2"]
+Seen --> HM
 
 end
 
-B0 --> U1["example.com
+subgraph Heap
+
+direction TB
+
+subgraph BucketArray["Bucket Array"]
+
+direction LR
+
+B0["Bucket 0"]
+
+B1["Bucket 1"]
+
+B2["Bucket 2"]
+
+B3["Bucket n"]
+
+end
+
+subgraph Chains["Collision Chains"]
+
+direction TB
+
+N1["Node
+
+URL
 DISCOVERED"]
 
-B0 --> U2["example.com/about
+N2["Node
+
+URL
 CRAWLED"]
 
-B2 --> U3["example.com/login
+N3["Node
+
+URL
 FAILED"]
+
+end
+
+end
+
+HM -->|buckets| B0
+HM --> B1
+HM --> B2
+HM --> B3
+
+B0 --> N1
+N1 --> N2
+
+B2 --> N3
+
+SQLite["SQLiteStorage"]
+
+SQLite -. rebuild() .-> Seen
 ```
 
 * Time Complexity - 
