@@ -236,48 +236,28 @@ Class SeenStore {
 ```mermaid
 flowchart LR
 
-subgraph SeenStore
-
-direction TB
-
-HM["HashMap<string, URLState>"]
-
-end
-
-subgraph Internal
-
-direction TB
-
-B0["Bucket"]
-
-B1["Bucket"]
-
-B2["Bucket"]
-
-Dots["..."]
-
-Bn["Bucket"]
-
-end
-
-HM --> B0
-HM --> B1
-HM --> B2
-HM --> Dots
-HM --> Bn
-
-B0 --> D1["URL
-DISCOVERED"]
-
-B1 --> D2["URL
-CRAWLED"]
-
-Bn --> D3["URL
-FAILED"]
-
 SQLite["SQLiteStorage"]
 
 SQLite -. rebuild() .-> HM
+
+subgraph SeenStore
+
+HM["HashMap<string, URLState>"]
+
+HM --> B0["Bucket 0"]
+HM --> B1["Bucket 1"]
+HM --> B2["Bucket 2"]
+
+end
+
+B0 --> U1["example.com
+DISCOVERED"]
+
+B0 --> U2["example.com/about
+CRAWLED"]
+
+B2 --> U3["example.com/login
+FAILED"]
 ```
 
 * Time Complexity - 
