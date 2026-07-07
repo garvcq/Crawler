@@ -1,0 +1,6 @@
+[submodule "DataStructures"]
+	path = DataStructures
+	url = https://github.com/SuperCodersOrg/ds_library-Garv.git
+[submodule "external/DataStructures"]
+	path = external/DataStructures
+	url = https://github.com/SuperCodersOrg/ds_library-Garv.git

@@ -42,7 +42,36 @@ URLNormalizer --> SeenStore
 
 SeenStore --> Frontier
 ```
-
+* File Structure - 
+```cpp
+Crawler/
+│
+├── docs/
+│
+├── database/
+│
+├── external/
+│   └── DataStructures/      (Git Submodule)
+│
+├── include/
+│   ├── browser/
+│   ├── crawler/
+│   ├── parser/
+│   ├── storage/
+│   └── common/
+│
+├── src/
+│   ├── browser/
+│   ├── crawler/
+│   ├── parser/
+│   └── storage/
+│
+├── tests/
+│
+├── build/
+│
+└── CMakeLists.txt
+```
 ## Design Decisions - 
 
 * Browser Rendering - Chrome DevTools Protocol is used instead of a traditional HTTP client because many websites generate content after JavaScript execution. Rendering the page inside Chrome allows the crawler to obtain the final DOM instead of only the initial HTML.
@@ -71,7 +100,7 @@ class Queue {
     public:
         void enqueue(const T& value);
         T dequeue();
-        T& front() const;
+        T& front();
         const T& front() const;
         bool empty() const;
         int size() const;
@@ -187,7 +216,7 @@ class Frontier {
     public:
         void enqueue(const URLDepth& urlDepth);
         URLDepth dequeue();
-        URlDepth& front() const;
+        URlDepth& front();
         bool empty() const;
         int size() const;
         void clear();
@@ -252,7 +281,7 @@ Class SeenStore {
         void add(const string&, URLState);
         URLState getState(const string&)const;
         void updateState(const string&, URLState);
-        void rebuild(SQLiteStorage&);
+        void rebuild(SQLiteStorage&);//executed on startup to rebuild the seenstore from the SQLite database
         void clear();
         int size()const;
 };
@@ -632,7 +661,7 @@ class Crawler {
 };
 ```
 
-* Workflow of the Crawler -
+* Crawler Component Coordination -
 
 ```mermaid
 flowchart LR
