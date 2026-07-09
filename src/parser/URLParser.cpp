@@ -58,6 +58,7 @@ ParsedURL URLParser::parse(std::string_view url)const{
                 break;
                 
             case State::Authority:
+                if(std::isspace(static_cast<unsigned char>(c)))return result;
                 if(c=='/'&& inIPv6 == false)
                 {  
                     if(i==start)return result; 
@@ -91,6 +92,7 @@ ParsedURL URLParser::parse(std::string_view url)const{
                 {
                     if(i==start)return result;
                     result.host = url.substr(start,i-start);
+                    result.hasport = true;
                     state = State::Port;
                     start=i+1;
                 }
