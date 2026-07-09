@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "URLParser.h"
-#include "ParsedURL.h"
+#include "parser/URLParser.h"
+#include "parser/ParsedURL.h"
 
 TEST(URLParserTest, InvalidScheme)
 {
@@ -81,4 +81,14 @@ TEST(URLParserTest, Spaces)
 
     EXPECT_FALSE(parser.parse(" ").valid);
     EXPECT_FALSE(parser.parse("https:// google.com").valid);
+}
+
+TEST(URLParserTest, InvalidWhitespaceInHost)
+{
+    URLParser parser;
+
+    EXPECT_FALSE(parser.parse("https:// google.com").valid);
+    EXPECT_FALSE(parser.parse("https://goo gle.com").valid);
+    EXPECT_FALSE(parser.parse("https://google.com ").valid);
+    EXPECT_FALSE(parser.parse("https://\tgoogle.com").valid);
 }

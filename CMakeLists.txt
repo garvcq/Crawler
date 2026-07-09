@@ -52,20 +52,22 @@ target_link_libraries(FrontierTests PRIVATE
 gtest_discover_tests(FrontierTests)
 
 #URL NORMALIZER
-# add_executable(URLNormalizerTests
-#     tests/normalizer/test_isvalid.cpp
-# )
+add_executable(URLNormalizerTests
+    tests/normalizer/test_normalize.cpp
+    tests/normalizer/test_relativeresolve.cpp
+)
 
-# target_link_libraries(URLNormalizerTests PRIVATE
-#     CrawlerLib
-#     gtest_main
+target_link_libraries(URLNormalizerTests PRIVATE
+    CrawlerLib
+    gtest_main
     
-# )
-# gtest_discover_tests(URLNormalizerTests)
+)
+gtest_discover_tests(URLNormalizerTests)
 
 #URL PARSER
 add_executable(URLParserTests
     tests/urlparser/test_general.cpp
+    tests/urlparser/test_invalid.cpp
 )
 
 target_link_libraries(URLParserTests PRIVATE
