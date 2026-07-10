@@ -29,6 +29,8 @@ add_library(CrawlerLib
     src/parser/URLParser.cpp
     src/parser/HTMLParser.cpp
     src/common/PatternMatcher.cpp
+    src/filter/QuickFilter.cpp
+    src/filter/LinkFilter.cpp
 )
 
 target_include_directories(CrawlerLib PUBLIC
@@ -103,3 +105,16 @@ target_link_libraries(HTMLTests PRIVATE
     
 )
 gtest_discover_tests(HTMLTests)
+
+#LINK FILTER
+add_executable(FILTERTests
+    tests/linkfilter/test.cpp
+    tests/quickfilter/test.cpp
+)
+
+target_link_libraries(FILTERTests PRIVATE
+    CrawlerLib
+    gtest_main
+    
+)
+gtest_discover_tests(FILTERTests)
