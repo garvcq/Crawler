@@ -37,6 +37,8 @@ add_library(CrawlerLib
     src/browser/HTTPClient.cpp
     src/browser/WebSocketConn.cpp
     src/browser/ChromeProcess.cpp
+    src/network/HTTPFetcher.cpp
+    src/network/PageFetcher.cpp
 )
 
 target_include_directories(CrawlerLib PUBLIC
@@ -152,3 +154,16 @@ target_link_libraries(RENDERTests PRIVATE
 )
 
 gtest_discover_tests(RENDERTests)
+
+#PAGE FALLBACK TESTS
+add_executable(FALLBACKTests
+    tests/network/httptest.cpp
+    tests/network/pagetest.cpp
+)
+
+target_link_libraries(FALLBACKTests PRIVATE
+    CrawlerLib
+    gtest_main
+)
+
+gtest_discover_tests(FALLBACKTests)
