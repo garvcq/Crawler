@@ -25,6 +25,7 @@ include(GoogleTest)
 # Crawler Library
 add_library(CrawlerLib
     src/crawler/Frontier.cpp
+    src/crawler/SeenStore.cpp
     src/parser/URLNormalizer.cpp
     src/parser/URLParser.cpp
     src/parser/HTMLParser.cpp
@@ -115,6 +116,18 @@ add_executable(FILTERTests
 target_link_libraries(FILTERTests PRIVATE
     CrawlerLib
     gtest_main
-    
 )
+
 gtest_discover_tests(FILTERTests)
+
+#SEENSTORE TESTS
+add_executable(SEENSTORETests
+    tests/seenstore/test.cpp
+)
+
+target_link_libraries(SEENSTORETests PRIVATE
+    CrawlerLib
+    gtest_main
+)
+
+gtest_discover_tests(SEENSTORETests)
