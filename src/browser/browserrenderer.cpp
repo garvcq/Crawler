@@ -15,13 +15,47 @@ BrowserRenderer::~BrowserRenderer()
 
 bool BrowserRenderer::initializeCDP()
 {
-    std::string response =http_.get(L"127.0.0.1",9222,L"/json/version");
-    json version =json::parse(response);
-    std::string websocketURL =version["webSocketDebuggerUrl"];
-    if(!cdp_.connect(websocketURL))return false;
-    if(!cdp_.createPage())return false;
-    if(!cdp_.enablePage())return false;
-    if(!cdp_.enableRuntime())return false;
+    std::string response;
+    bool success = false;
+    for (int i = 0; i < 15; ++i)
+    {
+        try
+        {
+            response = http_.get(L"127.0.0.1", 9222, L"/json/version");
+            success = true;
+            break;
+        }
+        catch (const std::exception&)
+        {
+            Sleep(200);
+        }
+    }
+    if (!success) return false;
+
+    json version;
+    try
+    {
+        version = json::parse(response);
+    }
+    catch (const std::exception&)
+    {
+        return false;
+    }
+
+    if (!version.contains("webSocketDebuggerUrl")) return false;
+    std::string websocketURL = version["webSocketDebuggerUrl"];
+
+    try
+    {
+        if(!cdp_.connect(websocketURL))return false;
+        if(!cdp_.createPage())return false;
+        if(!cdp_.enablePage())return false;
+        if(!cdp_.enableRuntime())return false;
+    }
+    catch (const std::exception&)
+    {
+        return false;
+    }
     return true;
 }
 
