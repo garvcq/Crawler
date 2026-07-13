@@ -9,6 +9,7 @@ class PageFetcher
 {
     public:
         Page fetch(const std::string& url);
+        void initialize();
     private:
         HTTPFetcher http_;
         BrowserRenderer browser_;
