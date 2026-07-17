@@ -1,5 +1,4 @@
 #include "browser/HTTPClient.h"
-
 #include <windows.h>
 #include <winhttp.h>
 #include <string>
