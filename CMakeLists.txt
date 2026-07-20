@@ -213,6 +213,43 @@ target_link_libraries(main PRIVATE
     CrawlerLib
 )
 
+# Indexer Library
+add_library(IndexerLib
+    src/indexer/IndexerStorage.cpp
+    src/indexer/TextExtractor.cpp
+    src/indexer/Tokenizer.cpp
+    src/indexer/StopwordFilter.cpp
+    src/indexer/Indexer.cpp
+)
+
+target_include_directories(IndexerLib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${MARIADB_INCLUDE_DIR}
+)
+
+target_link_libraries(IndexerLib PUBLIC
+    CrawlerLib
+    DataStructures
+)
+
+# Indexer Executable
+add_executable(indexer
+    src/indexer/main.cpp
+)
+target_link_libraries(indexer PRIVATE
+    IndexerLib
+)
+
+# Search Executable
+add_executable(search
+    src/search/main.cpp
+)
+target_link_libraries(search PRIVATE
+    IndexerLib
+    CrawlerLib
+    DataStructures
+)
+
 # to copy config into build
 file(COPY
     ${CMAKE_SOURCE_DIR}/config
