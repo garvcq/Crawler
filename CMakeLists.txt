@@ -204,6 +204,22 @@ target_link_libraries(ConfigLoaderTests PRIVATE
 
 gtest_discover_tests(ConfigLoaderTests)
 
+# INDEXER TESTS
+add_executable(IndexerTests
+    tests/indexer/test_tokenizer.cpp
+    tests/indexer/test_stopwordfilter.cpp
+    tests/indexer/test_textextractor.cpp
+)
+
+target_link_libraries(IndexerTests PRIVATE
+    IndexerLib
+    CrawlerLib
+    gtest_main
+)
+
+gtest_discover_tests(IndexerTests)
+
+
 #main
 add_executable(main
     src/main.cpp
